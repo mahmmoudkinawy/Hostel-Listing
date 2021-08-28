@@ -23,6 +23,8 @@ namespace HotelListing
             services.AddDbContext<DatabaseContext>(options =>
                 options.UseSqlServer(_configuration.GetConnectionString("SqlConnection")));
 
+
+
             services.AddCors(o =>
             {
                 o.AddPolicy("AllowAll", buidler =>
