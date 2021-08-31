@@ -1,9 +1,6 @@
-using HotelListing.Data;
-using HotelListing.IRepository;
-using HotelListing.Repository;
+using HotelListing.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,22 +20,10 @@ namespace HotelListing
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(_configuration.GetConnectionString("SqlConnection")));
+            services.AddServices(_configuration);
 
-            services.AddCors(o =>
-            {
-                o.AddPolicy("AllowAll", buidler =>
-                {
-                    buidler.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
-            });
-
-            services.AddAutoMapper(typeof(Startup));
-
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddAuthentication();
+            services.ConfigureIdentity();
 
             services.AddSwaggerGen(c =>
             {
@@ -65,6 +50,8 @@ namespace HotelListing
             app.UseCors("AllowAll");
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
